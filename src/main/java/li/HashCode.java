@@ -31,8 +31,8 @@ public class HashCode {
     static {
         Map<String, String> files = ImmutableMap.of(
                 "problem/a_example.in", "submissions/a_example.out",
-                "problem/b_should_be_easy.in", "submissions/b_should_be_easy.out"
-                //"problem/c_no_hurry.in", "submissions/c_no_hurry.out",
+                "problem/b_should_be_easy.in", "submissions/b_should_be_easy.out",
+                "problem/c_no_hurry.in", "submissions/c_no_hurry.out"
                 //"problem/d_metropolis.in", "submissions/d_metropolis.out"
                 //"problem/e_high_bonus.in", "submissions/e_high_bonus.out"
                 );
@@ -111,23 +111,32 @@ public class HashCode {
     private void selectNextRide() {
         for (Car car: cars) {
             if (!car.hasMission) {
+                int distance = rows + columns + 1;
+                Ride nearestRide = null;
                 for (Ride ride: rides) {
                     if (ride.done) continue;
                     int distanceToStart = Math.abs(ride.xStart - car.x) + Math.abs(ride.yStart - car.y);
                     if (now + distanceToStart < ride.earliestStart) continue;
                     if (now + distanceToStart + ride.routeCost > ride.latestFinish) continue;
 
-                    car.xStart = ride.xStart;
-                    car.yStart = ride.yStart;
-                    car.xEnd = ride.xEnd;
-                    car.yEnd = ride.yEnd;
-                    car.xTarget = ride.xStart;
-                    car.yTarget = ride.yStart;
 
+
+                    if (distanceToStart < distance) {
+                        distance = distanceToStart;
+                        nearestRide = ride;
+                    }
+                }
+                if (nearestRide != null) {
+                    car.xStart = nearestRide.xStart;
+                    car.yStart = nearestRide.yStart;
+                    car.xEnd = nearestRide.xEnd;
+                    car.yEnd = nearestRide.yEnd;
+                    car.xTarget = nearestRide.xStart;
+                    car.yTarget = nearestRide.yStart;
 
                     car.hasMission = true;
-                    car.rideIndex = ride.index;
-                    ride.done = true;
+                    car.rideIndex = nearestRide.index;
+                    nearestRide.done = true;
                 }
             }
         }
