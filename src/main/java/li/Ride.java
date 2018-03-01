@@ -1,6 +1,7 @@
 package li;
 
 public class Ride {
+    int index;
     int xStart;
     int yStart;
     int xEnd;
@@ -8,5 +9,5 @@ public class Ride {
     int earliestStart;
     int latestFinish;
     int routeCost;
-    Boolean done = false; // zugewiesen sobald ein Auto diese Route anfängt
+    Boolean done = false; // zugewiesen sobald ein Auto diese Route anfngt
 }

@@ -22,6 +22,7 @@ public class HashCode {
     private int ridesCount;
     private int bonus;
     private int steps;
+    private int now = 0;
 
     private Ride[] rides;
     private Car[] cars;
@@ -29,11 +30,11 @@ public class HashCode {
     private static final Map<String, String> fileSet;
     static {
         Map<String, String> files = ImmutableMap.of(
-                "problem/a_example.in", "submissions/a_example.out",
-                "problem/b_should_be_easy.in", "submissions/b_should_be_easy.out",
-                "problem/c_no_hurry.in", "submissions/c_no_hurry.out",
-                "problem/d_metropolis.in", "submissions/d_metropolis.out",
-                "problem/e_high_bonus.in", "submissions/e_high_bonus.out"
+                "problem/a_example.in", "submissions/a_example.out"
+                //"problem/b_should_be_easy.in", "submissions/b_should_be_easy.out",
+                //"problem/c_no_hurry.in", "submissions/c_no_hurry.out",
+                //"problem/d_metropolis.in", "submissions/d_metropolis.out",
+                //"problem/e_high_bonus.in", "submissions/e_high_bonus.out"
                 );
         fileSet = Collections.unmodifiableMap(files);
     }
@@ -44,8 +45,8 @@ public class HashCode {
         for(Map.Entry<String, String> files: fileSet.entrySet()) {
             HashCode hashCode = new HashCode();
             hashCode.readData(files.getKey());
-            resultList = hashCode.simulation();
-            hashCode.writeSubmission(resultList, files.getValue());
+            hashCode.simulation();
+            hashCode.writeSubmission(files.getValue());
         }
     }
 
@@ -63,6 +64,9 @@ public class HashCode {
 
         rides = new Ride[ridesCount];
         cars = new Car[vehicles];
+        for (int i = 0; i<vehicles; i++) {
+            cars[i] = new Car();
+        }
 
         int rowKey = 0;
         for (String line: lines) {
@@ -70,6 +74,7 @@ public class HashCode {
             List<String> lineItems = Splitter.on(CharMatcher.breakingWhitespace()).splitToList(line);
 
             Ride ride = new Ride();
+            ride.index = rowKey;
             ride.xStart = Integer.parseInt(lineItems.get(0));
             ride.yStart = Integer.parseInt(lineItems.get(1));
             ride.xEnd = Integer.parseInt(lineItems.get(2));
@@ -83,15 +88,84 @@ public class HashCode {
         }
     }
 
-    private void writeSubmission(List<String> resultList, String outFile) throws IOException {
-        Files.write(Paths.get(outFile), resultList);
+    private void writeSubmission(String outFile) throws IOException {
+        List<String> results = new ArrayList<>(vehicles);
+        for(Car car: cars) {
+            results.add(car.numerOfRides + " " + car.ridesString.toString());
+        }
+
+        Files.write(Paths.get(outFile), results);
     }
 
     private List<String> simulation() {
         List<String> result = new ArrayList<>();
 
-
+        for(now = 0; now < steps; now++) {
+            selectNextRide();
+            driveCars();
+        }
 
         return result;
+    }
+
+    private void selectNextRide() {
+        for (Car car: cars) {
+            if (!car.hasMission) {
+                for (Ride ride: rides) {
+                    if (ride.done) continue;
+                    int distanceToStart = Math.abs(ride.xStart - car.x) + Math.abs(ride.yStart - car.y);
+                    if (now + distanceToStart < ride.earliestStart) continue;
+                    if (now + distanceToStart + ride.routeCost > ride.latestFinish) continue;
+
+                    car.xStart = ride.xStart;
+                    car.yStart = ride.yStart;
+                    car.xEnd = ride.xEnd;
+                    car.yEnd = ride.yEnd;
+                    car.xTarget = ride.xStart;
+                    car.yTarget = ride.yStart;
+
+                    car.hasMission = true;
+                    car.rideIndex = ride.index;
+                    ride.done = true;
+                }
+            }
+        }
+    }
+
+    private void driveCars() {
+        for (Car car: cars) {
+            if (!car.hasMission) continue;
+
+
+
+            // drive
+            if (car.x != car.xTarget) {
+                if (car.xTarget > car.x) {
+                    car.x++;
+                } else {
+                    car.x--;
+                }
+            } else {
+                if (car.yTarget > car.y) {
+                    car.y++;
+                } else {
+                    car.y--;
+                }
+            }
+
+            // Target?
+
+            if (car.x == car.xTarget && car.y == car.yTarget) {
+                if (!car.hasStarted) {
+                    car.hasStarted = true;
+                    car.xTarget = car.xEnd;
+                    car.yTarget = car.yEnd;
+                } else {
+                    car.hasMission = false;
+                    car.numerOfRides++;
+                    car.ridesString.append(String.valueOf(car.rideIndex) + " ");
+                }
+            }
+        }
     }
 }
