@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class HashCode {
@@ -30,11 +27,11 @@ public class HashCode {
     private static final Map<String, String> fileSet;
     static {
         Map<String, String> files = ImmutableMap.of(
-                "problem/a_example.in", "submissions/a_example.out",
-                "problem/b_should_be_easy.in", "submissions/b_should_be_easy.out",
-                "problem/c_no_hurry.in", "submissions/c_no_hurry.out"
-                //"problem/d_metropolis.in", "submissions/d_metropolis.out"
-                //"problem/e_high_bonus.in", "submissions/e_high_bonus.out"
+                "problem/a_example.in", "submissions/a_example.out"
+                ,"problem/b_should_be_easy.in", "submissions/b_should_be_easy.out"
+                ,"problem/c_no_hurry.in", "submissions/c_no_hurry.out"
+                ,"problem/d_metropolis.in", "submissions/d_metropolis.out"
+                ,"problem/e_high_bonus.in", "submissions/e_high_bonus.out"
                 );
         fileSet = Collections.unmodifiableMap(files);
     }
@@ -43,6 +40,8 @@ public class HashCode {
         List<String> resultList;
 
         for(Map.Entry<String, String> files: fileSet.entrySet()) {
+            System.out.println(" ========================================= ");
+            System.out.println(" File: " + files.getKey());
             HashCode hashCode = new HashCode();
             hashCode.readData(files.getKey());
             hashCode.simulation();
@@ -100,7 +99,9 @@ public class HashCode {
     private List<String> simulation() {
         List<String> result = new ArrayList<>();
 
+        System.out.println(" Steps: " + String.valueOf(steps));
         for(now = 0; now < steps; now++) {
+            System.out.print(String.valueOf(now) + " ");
             selectNextRide();
             driveCars();
         }
@@ -113,30 +114,43 @@ public class HashCode {
             if (!car.hasMission) {
                 int distance = rows + columns + 1;
                 Ride nearestRide = null;
+                Ride possibleRide = null;
+                int possibleWait = 0;
                 for (Ride ride: rides) {
                     if (ride.done) continue;
                     int distanceToStart = Math.abs(ride.xStart - car.x) + Math.abs(ride.yStart - car.y);
-                    if (now + distanceToStart < ride.earliestStart) continue;
+                    if (now + distanceToStart < ride.earliestStart) {
+                        possibleWait  = ride.earliestStart - now - distanceToStart;
+                        possibleRide = ride;
+                    }
                     if (now + distanceToStart + ride.routeCost > ride.latestFinish) continue;
-
-
-
+                    
                     if (distanceToStart < distance) {
                         distance = distanceToStart;
                         nearestRide = ride;
                     }
                 }
-                if (nearestRide != null) {
+
+                int possibleDist = rows+columns+1;
+                if (possibleRide != null) {
+                    possibleDist = Math.abs(possibleRide.xStart - car.x) + Math.abs(possibleRide.yStart - car.y) + possibleWait;
+                }
+                if (possibleRide != null && nearestRide != null) {
+                    if (possibleDist < distance) {
+                        nearestRide = null;
+                    }
+                } else if (nearestRide != null) {
                     car.xStart = nearestRide.xStart;
                     car.yStart = nearestRide.yStart;
                     car.xEnd = nearestRide.xEnd;
                     car.yEnd = nearestRide.yEnd;
                     car.xTarget = nearestRide.xStart;
                     car.yTarget = nearestRide.yStart;
-
+                    car.hasStarted = false;
                     car.hasMission = true;
                     car.rideIndex = nearestRide.index;
                     nearestRide.done = true;
+                    car.counter = 0;
                 }
             }
         }
@@ -181,6 +195,7 @@ public class HashCode {
                     car.ridesString.append(String.valueOf(car.rideIndex) + " ");
                 }
             }
+            car.counter++;
         }
     }
 }

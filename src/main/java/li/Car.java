@@ -17,6 +17,7 @@ public class Car {
     public Boolean hasMission = false;
     public Boolean hasStarted = false;
     public int numerOfRides = 0;
+    public int counter = 0;
     StringBuilder ridesString = new StringBuilder();
 
 }
