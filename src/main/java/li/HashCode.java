@@ -19,11 +19,12 @@ public class HashCode {
     private int rows;
     private int columns;
     private int vehicles;
-    private int rides;
+    private int ridesCount;
     private int bonus;
     private int steps;
 
-    private int[][] ridesData;
+    private Ride[] rides;
+    private Car[] cars;
 
     private static final Map<String, String> fileSet;
     static {
@@ -56,22 +57,27 @@ public class HashCode {
         rows =  Integer.parseInt(parameterLine.get(0));
         columns =  Integer.parseInt(parameterLine.get(1));
         vehicles =  Integer.parseInt(parameterLine.get(2));
-        rides =  Integer.parseInt(parameterLine.get(3));
+        ridesCount =  Integer.parseInt(parameterLine.get(3));
         bonus =  Integer.parseInt(parameterLine.get(4));
         steps =  Integer.parseInt(parameterLine.get(5));
 
-        ridesData = new int[rides][6];
+        rides = new Ride[ridesCount];
+        cars = new Car[vehicles];
 
         int rowKey = 0;
         for (String line: lines) {
-            int columnKey = 0;
 
             List<String> lineItems = Splitter.on(CharMatcher.breakingWhitespace()).splitToList(line);
 
-            for (String item: lineItems) {
-                ridesData[rowKey][columnKey] = Integer.parseInt(item);
-                columnKey++;
-            }
+            Ride ride = new Ride();
+            ride.xStart = Integer.parseInt(lineItems.get(0));
+            ride.yStart = Integer.parseInt(lineItems.get(1));
+            ride.xEnd = Integer.parseInt(lineItems.get(2));
+            ride.yEnd = Integer.parseInt(lineItems.get(3));
+            ride.earliestStart = Integer.parseInt(lineItems.get(4));
+            ride.latestFinish = Integer.parseInt(lineItems.get(5));
+
+            rides[rowKey] = ride;
             rowKey++;
         }
     }
