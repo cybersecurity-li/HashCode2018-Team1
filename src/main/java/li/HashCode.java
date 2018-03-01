@@ -30,10 +30,10 @@ public class HashCode {
     private static final Map<String, String> fileSet;
     static {
         Map<String, String> files = ImmutableMap.of(
-                "problem/a_example.in", "submissions/a_example.out"
-                //"problem/b_should_be_easy.in", "submissions/b_should_be_easy.out",
+                "problem/a_example.in", "submissions/a_example.out",
+                "problem/b_should_be_easy.in", "submissions/b_should_be_easy.out"
                 //"problem/c_no_hurry.in", "submissions/c_no_hurry.out",
-                //"problem/d_metropolis.in", "submissions/d_metropolis.out",
+                //"problem/d_metropolis.in", "submissions/d_metropolis.out"
                 //"problem/e_high_bonus.in", "submissions/e_high_bonus.out"
                 );
         fileSet = Collections.unmodifiableMap(files);
@@ -124,6 +124,7 @@ public class HashCode {
                     car.xTarget = ride.xStart;
                     car.yTarget = ride.yStart;
 
+
                     car.hasMission = true;
                     car.rideIndex = ride.index;
                     ride.done = true;
@@ -136,7 +137,12 @@ public class HashCode {
         for (Car car: cars) {
             if (!car.hasMission) continue;
 
-
+            if (car.x == car.xTarget && car.y == car.yTarget) {
+                if (car.hasStarted) System.err.println("Car is at target but is started");
+                car.hasStarted = true;
+                car.xTarget = car.xEnd;
+                car.yTarget = car.yEnd;
+            }
 
             // drive
             if (car.x != car.xTarget) {
