@@ -7,5 +7,6 @@ public class Ride {
     int yEnd;
     int earliestStart;
     int latestFinish;
-    Boolean done = false;
+    int routeCost;
+    Boolean done = false; // zugewiesen sobald ein Auto diese Route anfängt
 }

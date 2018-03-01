@@ -76,6 +76,7 @@ public class HashCode {
             ride.yEnd = Integer.parseInt(lineItems.get(3));
             ride.earliestStart = Integer.parseInt(lineItems.get(4));
             ride.latestFinish = Integer.parseInt(lineItems.get(5));
+            ride.routeCost = Math.abs(ride.xStart - ride.xEnd) + Math.abs(ride.yStart - ride.yEnd);
 
             rides[rowKey] = ride;
             rowKey++;
