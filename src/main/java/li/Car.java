@@ -7,4 +7,6 @@ public class Car {
 
     public int targetX;
     public int targety;
+
+    public Boolean hasMission = false;
 }

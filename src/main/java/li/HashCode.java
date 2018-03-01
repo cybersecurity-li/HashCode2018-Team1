@@ -44,7 +44,7 @@ public class HashCode {
         for(Map.Entry<String, String> files: fileSet.entrySet()) {
             HashCode hashCode = new HashCode();
             hashCode.readData(files.getKey());
-            resultList = hashCode.analyzeData();
+            resultList = hashCode.simulation();
             hashCode.writeSubmission(resultList, files.getValue());
         }
     }
@@ -86,8 +86,10 @@ public class HashCode {
         Files.write(Paths.get(outFile), resultList);
     }
 
-    private List<String> analyzeData() {
+    private List<String> simulation() {
         List<String> result = new ArrayList<>();
+
+
 
         return result;
     }
