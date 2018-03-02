@@ -124,7 +124,7 @@ public class HashCode {
                         possibleRide = ride;
                     }
                     if (now + distanceToStart + ride.routeCost > ride.latestFinish) continue;
-                    
+
                     if (distanceToStart < distance) {
                         distance = distanceToStart;
                         nearestRide = ride;
