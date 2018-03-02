@@ -101,7 +101,7 @@ public class HashCode {
 
         System.out.println(" Steps: " + String.valueOf(steps));
         for(now = 0; now < steps; now++) {
-            System.out.print(String.valueOf(now) + " ");
+            if (now % 1000 == 0) System.out.print(String.valueOf(now) + " ");
             selectNextRide();
             driveCars();
         }
@@ -120,8 +120,10 @@ public class HashCode {
                     if (ride.done) continue;
                     int distanceToStart = Math.abs(ride.xStart - car.x) + Math.abs(ride.yStart - car.y);
                     if (now + distanceToStart < ride.earliestStart) {
-                        possibleWait  = ride.earliestStart - now - distanceToStart;
-                        possibleRide = ride;
+                        if (possibleWait > ride.earliestStart - now - distanceToStart) {
+                            possibleWait = ride.earliestStart - now - distanceToStart;
+                            possibleRide = ride;
+                        }
                     }
                     if (now + distanceToStart + ride.routeCost > ride.latestFinish) continue;
 
