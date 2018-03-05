@@ -119,6 +119,7 @@ public class HashCode {
                 Ride nextRide = null;
 
                 int minDeadhead = Integer.MAX_VALUE;
+
                 for (Ride ride : dataSet.rides) {
                     int distanceToStart = Math.abs(ride.startX - vehicle.getX()) + Math.abs(ride.startY - vehicle.getY());
                     // Ignore routes that cannot be completed in time.
@@ -126,8 +127,8 @@ public class HashCode {
 
                     if (step + distanceToStart < ride.earliestStart) {
                         int waitingTime = ride.earliestStart - (step + distanceToStart);
-                        if ((waitingTime + distanceToStart) < minDeadhead) {
-                            minDeadhead = (waitingTime + distanceToStart);
+                        if ((waitingTime + distanceToStart + 1) < minDeadhead) {
+                            minDeadhead = (waitingTime + distanceToStart + 1);
                             nextRide = ride;
                         }
                     } else if (step + distanceToStart >= ride.earliestStart) {
